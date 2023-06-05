@@ -1,3 +1,4 @@
+import axios from 'axios';
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
@@ -18,6 +19,42 @@ const getState = ({ getStore, getActions, setStore }) => {
 			// Use getActions to call a function within a fuction
 			exampleFunction: () => {
 				getActions().changeColor(0, "green");
+			},
+			login: async (userEmail,userPassword) => {
+				// console.log(userEmail,userPassword);
+				try{
+					let response = await axios.post('https://rosinni-redesigned-acorn-wgr4v6444r6h5r7j-3000.preview.app.github.dev/login', {
+						email:userEmail,
+						password:userPassword
+					  })
+					  if(response.status === 200){
+						localStorage.setItem("myToken",response.data.access_token)
+						return true;
+					  }
+
+				}catch(err){
+					console.log(err);
+					// err.response.status === 401
+					if(err.response.status === 401){
+						return false;
+					}
+				}
+
+
+				// fetch('https://rosinni-redesigned-acorn-wgr4v6444r6h5r7j-3000.preview.app.github.dev/login',{
+				// 	method:'POST',
+				// 	body: JSON.stringify({email:userEmail,password:userPassword}),
+				// 	headers:{
+				// 		'Content-Type':'application/json'
+				// 	}
+				// })
+				// .then((response)=>response.json())
+				// .then((data)=>console.log(data))
+				// .catch((error)=>console.log(error))
+			},
+			logout: () => {
+				let token = localStorage.getItem("myToken")
+				return	token != null ? true : false
 			},
 			loadSomeData: () => {
 				/**
